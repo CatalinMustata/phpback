@@ -24,7 +24,8 @@ class Home extends CI_Controller {
         $this->verifyBanning();
 	}
 	public function index() {
-        $this->autoLoginByCookie();
+		
+		$this->verifyLogin();
 
         //Use this function to parse $freename variables getDisplayHelpers();
         $data = $this->getDefaultData();
@@ -46,6 +47,9 @@ class Home extends CI_Controller {
 	}
 
 	public function category($id, $name = "", $order = "votes", $type = "desc", $page = '1') {
+		
+		$this->verifyLogin();
+		
         if (!$this->get->categoryExists($id)){
             header('Location: ' . base_url() . 'home');
             return;
@@ -69,6 +73,9 @@ class Home extends CI_Controller {
     }
 
     public function search() {
+	    
+	    $this->verifyLogin();
+	    
         $data = $this->getDefaultData();
 
         $query = $this->input->post('query');
@@ -81,6 +88,9 @@ class Home extends CI_Controller {
     }
 
     public function idea($id) {
+	    
+	    $this->verifyLogin();
+	    
         $idea = $this->get->getIdea($id);
 
         if ($idea === false) {
@@ -110,6 +120,8 @@ class Home extends CI_Controller {
 
     public function profile($id, $error=0) {
         $data = $this->getDefaultData();
+        
+        $this->verifyLogin();
 
         $data['user'] = $this->get->getUser($id);
 
@@ -134,35 +146,10 @@ class Home extends CI_Controller {
 		$this->load->view('_templates/footer', $data);
     }
 
-
-    public function login($error = "NULL", $ban=0) {
-        if(@!isset($_SESSION['phpback_userid']) && @isset($_COOKIE['phpback_sessionid'])){
-            $result = $this->get->verifyToken($_COOKIE['phpback_sessionid']);
-            if($result != 0){
-                $user = $this->get->getUser($result);
-                $this->get->setSessionUserValues($user);
-                $this->get->setSessionCookie();
-                header('Location: '. base_url() .'home');
-                return;
-            }
-        }
-
-        if(@isset($_SESSION['phpback_userid'])) {
-            header('Location: '. base_url() .'home');
-            return;
-        }
-
-        $data = $this->getDefaultData();
-        $data['error'] = $error;
-        $data['ban'] = $ban;
-
-        $this->load->view('_templates/header', $data);
-		$this->load->view('home/login', $data);
-		$this->load->view('_templates/menu', $data);
-		$this->load->view('_templates/footer', $data);
-    }
-
     public function postidea($error = "none") {
+	    
+	    $this->verifyLogin();
+	    
         $data = $this->getDefaultData();
         $data['error'] = $error;
         $data['POST'] = array(
@@ -227,8 +214,14 @@ class Home extends CI_Controller {
             setcookie('phpback_sessionid', '', time()-3600, '/');
         }
     }
+    
+    private function verifyLogin() {
+		if (@!isset($_SESSION['phpback_userid'])) {
+	        $this->tryAutoLoginByCookie();
+        }   
+    }
 
-    private function autoLoginByCookie() {
+    private function tryAutoLoginByCookie() {
         if(@!isset($_SESSION['phpback_userid']) && @isset($_COOKIE['phpback_sessionid'])) {
             $result = $this->get->verifyToken($_COOKIE['phpback_sessionid']);
             if($result != 0) {
@@ -237,9 +230,12 @@ class Home extends CI_Controller {
                 $_SESSION['phpback_username'] = $user->name;
                 $_SESSION['phpback_useremail'] = $user->email;
                 setcookie('phpback_sessionid',  $this->get->new_token($_SESSION['phpback_userid']), time()+3600*24*30, '/');
-                header('Location: '. base_url() .'home');
                 exit;
+            } else {
+	            header('Location: '. base_url() .'login');
             }
-        }
+        } else {
+	        header('Location: '. base_url() .'login');
+		}
     }
 }

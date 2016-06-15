@@ -107,7 +107,7 @@ class Action extends CI_Controller{
             $this->get->verifyToken($_COOKIE['phpback_sessionid']);
             setcookie('phpback_sessionid', '', time()-3600, '/');
         }
-        header('Location: ' . base_url() . 'home/');
+        header('Location: ' . base_url() . 'login/');
     }
 
     public function vote($votes, $ideaid){
