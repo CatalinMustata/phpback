@@ -24,7 +24,7 @@ class Home extends CI_Controller {
         $this->verifyBanning();
 	}
 	public function index() {
-		
+
 		$this->verifyLogin();
 
         //Use this function to parse $freename variables getDisplayHelpers();
@@ -47,9 +47,9 @@ class Home extends CI_Controller {
 	}
 
 	public function category($id, $name = "", $order = "votes", $type = "desc", $page = '1') {
-		
+
 		$this->verifyLogin();
-		
+
         if (!$this->get->categoryExists($id)){
             header('Location: ' . base_url() . 'home');
             return;
@@ -73,9 +73,9 @@ class Home extends CI_Controller {
     }
 
     public function search() {
-	    
+
 	    $this->verifyLogin();
-	    
+
         $data = $this->getDefaultData();
 
         $query = $this->input->post('query');
@@ -88,9 +88,9 @@ class Home extends CI_Controller {
     }
 
     public function idea($id) {
-	    
+
 	    $this->verifyLogin();
-	    
+
         $idea = $this->get->getIdea($id);
 
         if ($idea === false) {
@@ -120,7 +120,7 @@ class Home extends CI_Controller {
 
     public function profile($id, $error=0) {
         $data = $this->getDefaultData();
-        
+
         $this->verifyLogin();
 
         $data['user'] = $this->get->getUser($id);
@@ -147,9 +147,9 @@ class Home extends CI_Controller {
     }
 
     public function postidea($error = "none") {
-	    
+
 	    $this->verifyLogin();
-	    
+
         $data = $this->getDefaultData();
         $data['error'] = $error;
         $data['POST'] = array(
@@ -174,6 +174,13 @@ class Home extends CI_Controller {
 		$this->load->view('_templates/menu', $data);
 		$this->load->view('_templates/footer', $data);
     }
+
+		public function inactive() {
+			$data = $this->getDefaultData();
+			$this->load->view('_templates/header', $data);
+			$this->load->view('home/inactive');
+			$this->load->view('_templates/footer', $data);
+		}
 
     private function getDefaultData() {
         return array(
@@ -214,11 +221,11 @@ class Home extends CI_Controller {
             setcookie('phpback_sessionid', '', time()-3600, '/');
         }
     }
-    
+
     private function verifyLogin() {
 		if (@!isset($_SESSION['phpback_userid'])) {
 	        $this->tryAutoLoginByCookie();
-        }   
+        }
     }
 
     private function tryAutoLoginByCookie() {
