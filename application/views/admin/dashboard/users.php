@@ -54,6 +54,15 @@
               </td>
               <td>
                   <div class="pull-right">
+                    <form role="form" method="post" action="<?php echo base_url() . 'adminaction/activateuser'?>">
+                      <input type="hidden" name="id" value="<?php echo $user->id; ?>" />
+                      <input type="hidden" name="activate" value="<?php echo !($user->active) ?>" />
+                      <button type="submit" class="btn btn-info btn-sm" style="width:130px"><?php echo $user->active ? "Deactivate" : "Activate"?> User</button>
+                    </form>
+                  </div>
+              </td>
+              <td>
+                  <div class="pull-right">
                     <a href="<?php echo base_url() . 'admin/users/' . $user->id; ?>"><button type="submit" class="btn btn-danger btn-sm" style="width:130px">Ban User</button></a>
                   </div>
               </td>

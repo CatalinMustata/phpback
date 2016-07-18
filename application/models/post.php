@@ -48,7 +48,7 @@ class Post extends CI_Model
 	   			'pass' => $pass,
 	   			'votes' => $votes,
 	   			'isadmin' => '0'
-			); 
+			);
         }
 
 		$this->db->insert('users', $data);
@@ -69,14 +69,14 @@ class Post extends CI_Model
 	   			'comments' => '0',
 	   			'status' => 'new',
 	   			'categoryid' => $category_id,
-			); 
+			);
         $this->db->insert('ideas', $data);
       	$this->log($this->lang->language['log_new_idea'] . ": $title", "user", $author_id);
         return true;
     }
 
     public function add_comment($idea_id, $comment, $user_id){
-        
+
 
         $idea_id = (int) $idea_id;
         $user_id = (int) $user_id;
@@ -198,6 +198,11 @@ class Post extends CI_Model
         $this->update_by_id('users', 'banned', '0', $id);
     }
 
+		public function do_activate($id, $activate) {
+			$id = (int) $id;
+			$this->update_by_id('users', 'active', $activate, $id);
+		}
+
     public function deletecomment($id){
         $id = (int) $id;
         $comment = $this->get_row_by_id('comments', $id);
@@ -312,4 +317,3 @@ class Post extends CI_Model
         return ctype_alnum($text);
     }
 }
-

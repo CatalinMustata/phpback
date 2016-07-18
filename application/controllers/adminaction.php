@@ -63,6 +63,18 @@ class Adminaction extends CI_Controller{
         header('Location: ' . base_url() . 'admin/users');
     }
 
+    public function activateuser(){
+
+      $this->start(2);
+
+      $id = $this->input->post('id', true);
+      $activate = $this->input->post('activate', true);
+      $sql = $this->post->do_activate($id, $activate);
+
+      header('Location: ' . base_url() . 'admin/users');
+
+    }
+
     public function unban($userid){
         $this->start(2);
         $this->post->unban($userid);
