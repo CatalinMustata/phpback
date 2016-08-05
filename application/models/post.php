@@ -15,6 +15,10 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Post extends CI_Model
 {
+
+	private $dataDB;
+	private $loginDB;
+
 	public function __construct(){
 		parent::__construct();
 		$this->dataDB = $this->load->database('default', TRUE);
@@ -121,7 +125,7 @@ class Post extends CI_Model
 				   			'userid' => $user_id,
 				   			'number' => $votes,
 								);
-                $this->dataDB>insert('votes', $data);
+                $this->dataDB->insert('votes', $data);
                 $this->update_by_id('users','votes', $USER->votes - $votes, $USER->id);
                 $this->update_by_id('ideas', 'votes', $idea->votes + $votes, $idea_id);
                 $this->log(str_replace(array('%s1', '%s2'), array("#$idea_id", $votes), $this->lang->language['log_idea_voted']), "user", $user_id);
